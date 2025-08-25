@@ -1,0 +1,64 @@
+{% extends 'todos/base.html' %}
+
+{% block title %}
+<title>Task_Tracker</title>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Title -->
+  <div class="row mb-4">
+    <div class="offset-md-2 col-lg-8 text-center">
+      <h1 class="fw-bold text-primary">
+        📝 My Task_Tracker List
+      </h1>
+      <p class="text-muted">Stay organized and boost productivity</p>
+    </div>
+  </div>
+
+  <!-- Add Todo -->
+  <div class="row mb-4">
+    <div class="offset-md-2 col-lg-8">
+      <form method="post" action="{% url 'todos:add' %}" class="d-flex gap-2">
+        {% csrf_token %}
+        <input type="text" class="form-control shadow-sm" name="title" placeholder="✍️ Add a new task..." required>
+        <button type="submit" class="btn btn-primary shadow-sm">
+          <i class="fas fa-plus"></i> Add
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Todo List -->
+  <div class="row">
+    <div class="offset-md-2 col-lg-8">
+      <div class="list-group shadow-sm rounded">
+        {% for todo in todo_list %}
+        <div class="list-group-item d-flex justify-content-between align-items-center {% if todo.isCompleted %} bg-light text-muted {% endif %}">
+          <div class="d-flex align-items-center">
+            <form style="display:inline;" method="post" action="{% url 'todos:update' todo.id %}">
+              {% csrf_token %}
+              <input type="checkbox" name="isCompleted" onchange="this.form.submit()" 
+                     {% if todo.isCompleted %} checked {% endif %}
+                     class="mr-2">
+            </form>
+            <span class="{% if todo.isCompleted %} text-decoration-line-through {% endif %}">
+              {{ todo.title }}
+            </span>
+          </div>
+          <a href="{% url 'todos:delete' todo.id %}" class="text-danger ms-3" title="Delete">
+            <i class="fas fa-trash-alt"></i>
+          </a>
+        </div>
+        {% empty %}
+        <div class="list-group-item text-center text-muted">
+          🎉 No tasks yet. Add your first one above!
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
